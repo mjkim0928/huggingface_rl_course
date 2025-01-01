@@ -20,7 +20,7 @@ def greedy_policy(Qtable, state):
     return action
 
 #epsilon greedy policy 구현
-def epsilon_greedy_policy(Qtable, state, epsilon):
+def epsilon_greedy_policy(Qtable, state, epsilon, actions):
     #0과 1사이의 무작위 수 하나 뽑기
     random_num = random.uniform(0,1)
 
@@ -29,9 +29,7 @@ def epsilon_greedy_policy(Qtable, state, epsilon):
         action = greedy_policy(Qtable, state)
     #아니면 exploration(탐험)
     else:
-        action = np.random.choice(Qtable[state][:])
-        #action = env.action_space.sample()
-
+        action = random.choice(actions)
     return action
 
 #train 정의;반환값은 훈련된 Qtable
@@ -43,10 +41,12 @@ def train(n_training_episodes, min_epsilon, max_epsilon, decay_rate, env, Qtable
         step = 0
         terminated = False
         truncated = False
+        actions = np.arange(env.action_space.n - 1)
 
         for step in range(max_steps):
+            
             #inference 시엔 epsilon_greedy_policy로 진행
-            action = epsilon_greedy_policy(Qtable, state, epsilon)
+            action = epsilon_greedy_policy(Qtable, state, epsilon, actions)
             next_state, reward, terminated, truncated, info = env.step(action)
             
 
